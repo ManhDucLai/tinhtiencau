@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tính Tiền Cầu Lông</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏸</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            overflow-x: hidden; 
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4">
+
+    <div class="glass-panel w-full min-h-screen sm:min-h-0 sm:max-w-md sm:rounded-2xl shadow-xl flex flex-col p-6">
+        <h2 class="text-2xl font-bold text-center text-blue-600 mb-6 mt-4 sm:mt-0">🏸 Chia Tiền Cầu Lông</h2>
+
+        <div class="space-y-5 flex-grow">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Tiền Sân (VNĐ):</label>
+                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" value="200.000" oninput="xuLyNhapLieu(this, 'sugTienSan')">
+                <div id="sugTienSan" class="hidden mt-2 transition-all"></div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Giá 1 Ống Cầu (12 quả) (VNĐ):</label>
+                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" value="220.000" oninput="xuLyNhapLieu(this, 'sugGiaCau')">
+                <div id="sugGiaCau" class="hidden mt-2 transition-all"></div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Số Quả Cầu Đã Dùng:</label>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soCauDung" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="VD: 6" value="0">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Số Người Chơi:</label>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soNguoi" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="VD: 8" value="8" min="1">
+            </div>
+
+            <button onclick="tinhTien()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl transition duration-200 mt-6 shadow-md text-lg">
+                Tính Tiền Ngay
+            </button>
+        </div>
+
+        <div id="ketQuaBox" class="mt-8 hidden bg-blue-50 border border-blue-200 rounded-xl p-5 text-center mb-4 sm:mb-0 shadow-inner">
+            <p class="text-gray-600 mb-1">Tổng tiền cầu: <span id="tongTienCau" class="font-bold text-black">0</span> VNĐ</p>
+            <p class="text-gray-600 mb-2">Tổng chi phí: <span id="tongChiPhi" class="font-bold text-black">0</span> VNĐ</p>
+            <div class="border-t border-blue-200 my-3 pt-3">
+                <p class="text-lg text-gray-800">Mỗi người đóng (Đã làm tròn):</p>
+                <p id="tienMoiNguoi" class="text-4xl font-extrabold text-blue-600 mt-2">0 <span class="text-lg font-normal">VNĐ</span></p>
+                <p class="text-sm text-gray-500 mt-3">Gốc: <span id="tienGoc">0</span> VNĐ (Dư quỹ: <span id="tienDu">0</span> VNĐ)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hàm vừa tạo dấu chấm khi gõ, vừa hiển thị gợi ý x10.000 và x100.000
+        function xuLyNhapLieu(inputElement, sugId) {
+            let rawValue = inputElement.value.replace(/\D/g, ''); // Lọc lấy số
+            let sugBox = document.getElementById(sugId);
+
+            // Nếu ô trống thì ẩn gợi ý
+            if (!rawValue) {
+                inputElement.value = '';
+                sugBox.classList.add('hidden');
+                return;
+            }
+
+            // Tự động thêm dấu chấm ngăn cách hàng nghìn khi gõ
+            let num = parseInt(rawValue, 10);
+            inputElement.value = num.toLocaleString('vi-VN');
+
+            // Hiển thị gợi ý chục nghìn và trăm nghìn cho mọi số > 0
+            if (num > 0) {
+                let sugValue10k = num * 10000;
+                let sugValue100k = num * 100000;
+                let formattedSug10k = sugValue10k.toLocaleString('vi-VN');
+                let formattedSug100k = sugValue100k.toLocaleString('vi-VN');
+
+                // Tạo 2 nút bấm gợi ý
+                sugBox.innerHTML = `
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="chonGoiY('${inputElement.id}', '${formattedSug10k}', '${sugId}')" 
+                            class="inline-flex items-center text-sm bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
+                            ✨ Chọn: ${formattedSug10k}
+                        </button>
+                        <button type="button" onclick="chonGoiY('${inputElement.id}', '${formattedSug100k}', '${sugId}')" 
+                            class="inline-flex items-center text-sm bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
+                            ✨ Chọn: ${formattedSug100k}
+                        </button>
+                    </div>`;
+                sugBox.classList.remove('hidden');
+            } else {
+                // Nếu giá trị không hợp lệ thì ẩn gợi ý
+                sugBox.classList.add('hidden');
+            }
+        }
+
+        // Hàm áp dụng gợi ý khi người dùng bấm vào nút
+        function chonGoiY(inputId, formattedValue, sugId) {
+            document.getElementById(inputId).value = formattedValue;
+            document.getElementById(sugId).classList.add('hidden');
+        }
+
+        function tinhTien() {
+            // Lấy dữ liệu và bỏ dấu chấm đi để tính toán
+            const tienSanStr = document.getElementById('tienSan').value.replace(/\D/g, '');
+            const giaOngCauStr = document.getElementById('giaOngCau').value.replace(/\D/g, '');
+            
+            const tienSan = parseFloat(tienSanStr) || 0;
+            const giaOngCau = parseFloat(giaOngCauStr) || 0;
+            const soCauDung = parseFloat(document.getElementById('soCauDung').value) || 0;
+            const soNguoi = parseInt(document.getElementById('soNguoi').value) || 1;
+
+            // Tính tiền cầu
+            const giaMotQua = giaOngCau / 12;
+            const tongTienCau = giaMotQua * soCauDung;
+            
+            // Tổng tiền và chia đều
+            const tongTien = tienSan + tongTienCau;
+            const chiaDeu = tongTien / soNguoi;
+
+            // Làm tròn LÊN hàng nghìn (VD: 43.215 -> 44.000)
+            const tienLamTron = Math.ceil(chiaDeu / 1000) * 1000;
+            
+            // Tính số tiền dư ra để nhập quỹ
+            const tongThu = tienLamTron * soNguoi;
+            const tienDu = tongThu - tongTien;
+
+            // Hiển thị dữ liệu lên màn hình
+            document.getElementById('tongTienCau').innerText = Math.round(tongTienCau).toLocaleString('vi-VN');
+            document.getElementById('tongChiPhi').innerText = Math.round(tongTien).toLocaleString('vi-VN');
+            
+            document.getElementById('tienMoiNguoi').innerText = tienLamTron.toLocaleString('vi-VN');
+            document.getElementById('tienGoc').innerText = Math.round(chiaDeu).toLocaleString('vi-VN');
+            document.getElementById('tienDu').innerText = Math.round(tienDu).toLocaleString('vi-VN');
+            
+            // Hiện box kết quả với hiệu ứng mượt
+            const box = document.getElementById('ketQuaBox');
+            box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
