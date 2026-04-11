@@ -21,6 +21,7 @@
             margin: 0; 
         }
         input[type=number] {
+            appearance: textfield;
             -moz-appearance: textfield;
         }
     </style>
@@ -33,13 +34,13 @@
         <div class="space-y-5 flex-grow">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Tiền Sân (VNĐ):</label>
-                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" value="200.000" oninput="xuLyNhapLieu(this, 'sugTienSan')">
+                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập tiền sân" oninput="xuLyNhapLieu(this, 'sugTienSan')">
                 <div id="sugTienSan" class="hidden mt-2 transition-all"></div>
             </div>
 
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Giá 1 Ống Cầu (12 quả) (VNĐ):</label>
-                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" value="220.000" oninput="xuLyNhapLieu(this, 'sugGiaCau')">
+                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau')">
                 <div id="sugGiaCau" class="hidden mt-2 transition-all"></div>
             </div>
 
