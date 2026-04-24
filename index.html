@@ -34,13 +34,19 @@
         <div class="space-y-5 flex-grow">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Tiền Sân (VNĐ):</label>
-                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập tiền sân" oninput="xuLyNhapLieu(this, 'sugTienSan')">
+                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập tiền sân" oninput="xuLyNhapLieu(this, 'sugTienSan', true)">
                 <div id="sugTienSan" class="hidden mt-2 transition-all"></div>
             </div>
 
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2">Giá 1 Ống Cầu (12 quả) (VNĐ):</label>
-                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau')">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-gray-700 text-sm font-bold">Giá 1 Ống Cầu (VNĐ):</label>
+                    <select id="loaiOngCau" class="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
+                        <option value="12">Loại 12 quả</option>
+                        <option value="10">Loại 10 quả</option>
+                    </select>
+                </div>
+                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)">
                 <div id="sugGiaCau" class="hidden mt-2 transition-all"></div>
             </div>
 
@@ -71,8 +77,8 @@
     </div>
 
     <script>
-        // Hàm vừa tạo dấu chấm khi gõ, vừa hiển thị gợi ý x10.000 và x100.000
-        function xuLyNhapLieu(inputElement, sugId) {
+        // Hàm vừa tạo dấu chấm khi gõ, vừa hiển thị gợi ý
+        function xuLyNhapLieu(inputElement, sugId, isTienSan = false) {
             let rawValue = inputElement.value.replace(/\D/g, ''); // Lọc lấy số
             let sugBox = document.getElementById(sugId);
 
@@ -87,24 +93,36 @@
             let num = parseInt(rawValue, 10);
             inputElement.value = num.toLocaleString('vi-VN');
 
-            // Hiển thị gợi ý chục nghìn và trăm nghìn cho mọi số > 0
+            // Hiển thị gợi ý cho mọi số > 0
             if (num > 0) {
-                let sugValue10k = num * 10000;
-                let sugValue100k = num * 100000;
-                let formattedSug10k = sugValue10k.toLocaleString('vi-VN');
-                let formattedSug100k = sugValue100k.toLocaleString('vi-VN');
+                let suggestions = [];
+                
+                if (isTienSan) {
+                    // Gợi ý theo số chữ số nhập: 1 chữ số ×100k, 2 chữ số ×10k, 3 chữ số ×1k
+                    let digits = rawValue.length;
+                    let multiplier = digits === 1 ? 100000 : digits === 2 ? 10000 : 1000;
+                    let suggested = num * multiplier;
+                    
+                    if (suggested > 0 && suggested < 1000000) suggestions.push(suggested);
+                } else {
+                    let sug10k = num * 10000;
+                    let sug100k = num * 100000;
+                    suggestions.push(sug10k);
+                    suggestions.push(sug100k);
+                }
 
-                // Tạo 2 nút bấm gợi ý
+                // Xóa trùng lặp
+                suggestions = [...new Set(suggestions)];
+
+                // Tạo nút bấm gợi ý
                 sugBox.innerHTML = `
                     <div class="flex flex-wrap gap-2">
-                        <button type="button" onclick="chonGoiY('${inputElement.id}', '${formattedSug10k}', '${sugId}')" 
-                            class="inline-flex items-center text-sm bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
-                            ✨ Chọn: ${formattedSug10k}
-                        </button>
-                        <button type="button" onclick="chonGoiY('${inputElement.id}', '${formattedSug100k}', '${sugId}')" 
-                            class="inline-flex items-center text-sm bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
-                            ✨ Chọn: ${formattedSug100k}
-                        </button>
+                        ${suggestions.map(val => `
+                            <button type="button" onclick="chonGoiY('${inputElement.id}', '${val.toLocaleString('vi-VN')}', '${sugId}')" 
+                                class="inline-flex items-center text-sm bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
+                                ✨ Chọn: ${val.toLocaleString('vi-VN')}
+                            </button>
+                        `).join('')}
                     </div>`;
                 sugBox.classList.remove('hidden');
             } else {
@@ -128,9 +146,10 @@
             const giaOngCau = parseFloat(giaOngCauStr) || 0;
             const soCauDung = parseFloat(document.getElementById('soCauDung').value) || 0;
             const soNguoi = parseInt(document.getElementById('soNguoi').value) || 1;
+            const loaiOngCau = parseInt(document.getElementById('loaiOngCau').value) || 12;
 
             // Tính tiền cầu
-            const giaMotQua = giaOngCau / 12;
+            const giaMotQua = giaOngCau / loaiOngCau;
             const tongTienCau = giaMotQua * soCauDung;
             
             // Tổng tiền và chia đều
