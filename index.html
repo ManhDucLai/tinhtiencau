@@ -98,17 +98,17 @@
                 let suggestions = [];
                 
                 if (isTienSan) {
-                    // Gợi ý theo số chữ số nhập: 1 chữ số ×100k, 2 chữ số ×10k, 3 chữ số ×1k
-                    let digits = rawValue.length;
-                    let multiplier = digits === 1 ? 100000 : digits === 2 ? 10000 : 1000;
-                    let suggested = num * multiplier;
-                    
-                    if (suggested > 0 && suggested < 1000000) suggestions.push(suggested);
+                    // Thử tất cả các mức nhân hợp lý và gợi ý những cái dưới 1 triệu
+                    [1000, 10000, 100000].forEach(multiplier => {
+                        let suggested = num * multiplier;
+                        if (suggested > num && suggested <= 990000) suggestions.push(suggested);
+                    });
                 } else {
-                    let sug10k = num * 10000;
-                    let sug100k = num * 100000;
-                    suggestions.push(sug10k);
-                    suggestions.push(sug100k);
+                    // Thử tất cả các mức nhân hợp lý cho giá ống cầu
+                    [1000, 10000, 100000].forEach(multiplier => {
+                        let suggested = num * multiplier;
+                        if (suggested > num && suggested <= 990000) suggestions.push(suggested);
+                    });
                 }
 
                 // Xóa trùng lặp
