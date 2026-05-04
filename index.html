@@ -43,7 +43,7 @@
                     <label class="block text-gray-700 text-sm font-bold">Giá 1 Ống Cầu (VNĐ):</label>
                     <select id="loaiOngCau" class="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
                         <option value="12">Loại 12 quả</option>
-                        <option value="10">Loại 10 quả</option>
+                        <option value="10" selected>Loại 10 quả</option>
                     </select>
                 </div>
                 <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)">
@@ -146,7 +146,7 @@
             const giaOngCau = parseFloat(giaOngCauStr) || 0;
             const soCauDung = parseFloat(document.getElementById('soCauDung').value) || 0;
             const soNguoi = parseInt(document.getElementById('soNguoi').value) || 1;
-            const loaiOngCau = parseInt(document.getElementById('loaiOngCau').value) || 12;
+            const loaiOngCau = parseInt(document.getElementById('loaiOngCau').value) || 10;
 
             // Tính tiền cầu
             const giaMotQua = giaOngCau / loaiOngCau;
