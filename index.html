@@ -1,77 +1,98 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tính Tiền Cầu Lông</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏸</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏸</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             background-color: #f3f4f6;
-            overflow-x: hidden; 
+            overflow-x: hidden;
         }
+
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
         }
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
+
         input[type=number] {
             appearance: textfield;
             -moz-appearance: textfield;
         }
     </style>
 </head>
+
 <body class="min-h-screen flex items-center justify-center p-0 sm:p-4">
 
     <div class="glass-panel w-full min-h-screen sm:min-h-0 sm:max-w-md sm:rounded-2xl shadow-xl flex flex-col p-6">
-        <h2 class="text-2xl font-bold text-center text-blue-600 mb-6 mt-4 sm:mt-0">🏸 Chia Tiền Cầu Lông</h2>
+
 
         <div class="space-y-5 flex-grow">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Tiền Sân (VNĐ):</label>
-                <input type="text" inputmode="numeric" id="tienSan" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập tiền sân" oninput="xuLyNhapLieu(this, 'sugTienSan', true)">
+                <input type="text" inputmode="numeric" id="tienSan"
+                    class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
+                    placeholder="Nhập tiền sân" oninput="xuLyNhapLieu(this, 'sugTienSan', true)">
                 <div id="sugTienSan" class="hidden mt-2 transition-all"></div>
             </div>
 
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <label class="block text-gray-700 text-sm font-bold">Giá 1 Ống Cầu (VNĐ):</label>
-                    <select id="loaiOngCau" class="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
+                    <select id="loaiOngCau"
+                        class="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm">
                         <option value="12">Loại 12 quả</option>
                         <option value="10" selected>Loại 10 quả</option>
                     </select>
                 </div>
-                <input type="text" inputmode="numeric" id="giaOngCau" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition" placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)">
+                <input type="text" inputmode="numeric" id="giaOngCau"
+                    class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
+                    placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)">
                 <div id="sugGiaCau" class="hidden mt-2 transition-all"></div>
             </div>
 
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Số Quả Cầu Đã Dùng:</label>
-                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soCauDung" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="VD: 6" value="0">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soCauDung"
+                    class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="VD: 6" value="0">
             </div>
 
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">Số Người Chơi:</label>
-                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soNguoi" class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="VD: " value="" min="1">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="soNguoi"
+                    class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                    placeholder="VD: " value="" min="1">
             </div>
 
-            <button onclick="tinhTien()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl transition duration-200 mt-6 shadow-md text-lg">
+            <button onclick="tinhTien()"
+                class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl transition duration-200 mt-6 shadow-md text-lg">
                 Tính Tiền Ngay
             </button>
         </div>
 
-        <div id="ketQuaBox" class="mt-8 hidden bg-blue-50 border border-blue-200 rounded-xl p-5 text-center mb-4 sm:mb-0 shadow-inner">
-            <p class="text-gray-600 mb-1">Tổng tiền cầu: <span id="tongTienCau" class="font-bold text-black">0</span> VNĐ</p>
-            <p class="text-gray-600 mb-2">Tổng chi phí: <span id="tongChiPhi" class="font-bold text-black">0</span> VNĐ</p>
+        <div id="ketQuaBox"
+            class="mt-8 hidden bg-blue-50 border border-blue-200 rounded-xl p-5 text-center mb-4 sm:mb-0 shadow-inner">
+            <p class="text-gray-600 mb-1">Tổng tiền cầu: <span id="tongTienCau" class="font-bold text-black">0</span>
+                VNĐ</p>
+            <p class="text-gray-600 mb-2">Tổng chi phí: <span id="tongChiPhi" class="font-bold text-black">0</span> VNĐ
+            </p>
             <div class="border-t border-blue-200 my-3 pt-3">
                 <p class="text-lg text-gray-800">Mỗi người đóng (Đã làm tròn):</p>
-                <p id="tienMoiNguoi" class="text-4xl font-extrabold text-blue-600 mt-2">0 <span class="text-lg font-normal">VNĐ</span></p>
-                <p class="text-sm text-gray-500 mt-3">Gốc: <span id="tienGoc">0</span> VNĐ (Cắn được: <span id="tienDu">0</span> VNĐ)</p>
+                <p id="tienMoiNguoi" class="text-4xl font-extrabold text-blue-600 mt-2">0 <span
+                        class="text-lg font-normal">VNĐ</span></p>
+                <p class="text-sm text-gray-500 mt-3">Gốc: <span id="tienGoc">0</span> VNĐ (Đớp: <span
+                        id="tienDu">0</span> VNĐ)</p>
             </div>
         </div>
     </div>
@@ -96,7 +117,7 @@
             // Hiển thị gợi ý cho mọi số > 0
             if (num > 0) {
                 let suggestions = [];
-                
+
                 if (isTienSan) {
                     // Thử tất cả các mức nhân hợp lý và gợi ý những cái dưới 1 triệu
                     [1000, 10000, 100000].forEach(multiplier => {
@@ -141,7 +162,7 @@
             // Lấy dữ liệu và bỏ dấu chấm đi để tính toán
             const tienSanStr = document.getElementById('tienSan').value.replace(/\D/g, '');
             const giaOngCauStr = document.getElementById('giaOngCau').value.replace(/\D/g, '');
-            
+
             const tienSan = parseFloat(tienSanStr) || 0;
             const giaOngCau = parseFloat(giaOngCauStr) || 0;
             const soCauDung = parseFloat(document.getElementById('soCauDung').value) || 0;
@@ -151,14 +172,14 @@
             // Tính tiền cầu
             const giaMotQua = giaOngCau / loaiOngCau;
             const tongTienCau = giaMotQua * soCauDung;
-            
+
             // Tổng tiền và chia đều
             const tongTien = tienSan + tongTienCau;
             const chiaDeu = tongTien / soNguoi;
 
             // Làm tròn LÊN hàng nghìn (VD: 43.215 -> 44.000)
             const tienLamTron = Math.ceil(chiaDeu / 1000) * 1000;
-            
+
             // Tính số tiền dư ra để nhập quỹ
             const tongThu = tienLamTron * soNguoi;
             const tienDu = tongThu - tongTien;
@@ -166,11 +187,11 @@
             // Hiển thị dữ liệu lên màn hình
             document.getElementById('tongTienCau').innerText = Math.round(tongTienCau).toLocaleString('vi-VN');
             document.getElementById('tongChiPhi').innerText = Math.round(tongTien).toLocaleString('vi-VN');
-            
+
             document.getElementById('tienMoiNguoi').innerText = tienLamTron.toLocaleString('vi-VN');
             document.getElementById('tienGoc').innerText = Math.round(chiaDeu).toLocaleString('vi-VN');
             document.getElementById('tienDu').innerText = Math.round(tienDu).toLocaleString('vi-VN');
-            
+
             // Hiện box kết quả với hiệu ứng mượt
             const box = document.getElementById('ketQuaBox');
             box.classList.remove('hidden');
@@ -178,4 +199,5 @@
         }
     </script>
 </body>
+
 </html>
