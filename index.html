@@ -61,7 +61,8 @@
                 </div>
                 <input type="text" inputmode="numeric" id="giaOngCau"
                     class="w-full px-4 py-3 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition"
-                    placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)">
+                    placeholder="Nhập giá 1 ống cầu" oninput="xuLyNhapLieu(this, 'sugGiaCau', false)"
+                    onfocus="hienGoiYGiaCau(this)">
                 <div id="sugGiaCau" class="hidden mt-2 transition-all"></div>
             </div>
 
@@ -113,15 +114,15 @@
             
             <div class="space-y-2.5">
                 <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
-                    <span class="text-gray-500">🏟️ Tiền sân:</span>
+                    <span class="text-gray-500"> Tiền sân:</span>
                     <span class="font-semibold text-gray-800"><span id="kqTienSan">0</span> VNĐ</span>
                 </div>
                 <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
-                    <span class="text-gray-500">🏸 Tổng tiền cầu:</span>
+                    <span class="text-gray-500"> Tổng tiền cầu:</span>
                     <span class="font-semibold text-gray-800"><span id="tongTienCau">0</span> VNĐ</span>
                 </div>
                 <div class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
-                    <span class="text-gray-500">💰 Tổng chi phí:</span>
+                    <span class="text-gray-500"> Tổng chi phí:</span>
                     <span class="font-bold text-gray-900"><span id="tongChiPhi">0</span> VNĐ</span>
                 </div>
                 
@@ -174,6 +175,19 @@
             sugBox.classList.remove('hidden');
         }
 
+        // Hiển thị gợi ý giá ống cầu cố định
+        function hienGoiYGiaCau(inputElement) {
+            let sugBox = document.getElementById('sugGiaCau');
+            sugBox.innerHTML = `
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="chonGoiY('${inputElement.id}', '205.000', 'sugGiaCau')" 
+                        class="inline-flex items-center text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1.5 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
+                        Phương Hương (205k)
+                    </button>
+                </div>`;
+            sugBox.classList.remove('hidden');
+        }
+
         // Hàm vừa tạo dấu chấm khi gõ, vừa hiển thị gợi ý
         function xuLyNhapLieu(inputElement, sugId, isTienSan = false) {
             let rawValue = inputElement.value.replace(/\D/g, ''); // Lọc lấy số
@@ -185,7 +199,7 @@
                 if (isTienSan) {
                     hienGoiYTienSan(inputElement);
                 } else {
-                    sugBox.classList.add('hidden');
+                    hienGoiYGiaCau(inputElement);
                 }
                 return;
             }
@@ -212,10 +226,14 @@
                     // Tạo nút bấm gợi ý
                     sugBox.innerHTML = `
                         <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="chonGoiY('${inputElement.id}', '205.000', '${sugId}')" 
+                                class="inline-flex items-center text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1.5 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
+                                Phương Hương (205k)
+                            </button>
                             ${suggestions.map(val => `
                                 <button type="button" onclick="chonGoiY('${inputElement.id}', '${val.toLocaleString('vi-VN')}', '${sugId}')" 
                                     class="inline-flex items-center text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1.5 rounded-lg border border-blue-200 shadow-sm active:bg-blue-300 hover:bg-blue-200 transition">
-                                    ✨ ${val.toLocaleString('vi-VN')}
+                                    ${val.toLocaleString('vi-VN')}
                                 </button>
                             `).join('')}
                         </div>`;
@@ -225,7 +243,7 @@
                 if (isTienSan) {
                     hienGoiYTienSan(inputElement);
                 } else {
-                    sugBox.classList.add('hidden');
+                    hienGoiYGiaCau(inputElement);
                 }
             }
         }
